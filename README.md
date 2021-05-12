@@ -1,5 +1,5 @@
 # Pygame DoodleJump
-The simplest doodle jump made with python3 and pygame
+The simplest doodle jump made with python3 and pygame in onnly 2 days (so the code is not really clean)
 
 ## Table of contents
 * [General info](#general-info)
