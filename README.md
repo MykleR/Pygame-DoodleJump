@@ -6,6 +6,8 @@ The simplest doodle jump made with python3 and pygame in only 2 days (so the cod
 * [Requirements](#requirements)
 * [Setup](#setup)
 
+![Screenshot](https://github.com/MykleCode/pygame-doodlejump/blob/main/demo.gif)
+
 ## General Info
 * No images used
 * Only one file
