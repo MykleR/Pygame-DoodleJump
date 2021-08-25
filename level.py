@@ -38,7 +38,7 @@ class Platform(Sprite):
 	"""
 	# (Overriding Sprite.__init__ constructor)
 	def __init__(self,level,*args,spring=False,breakable=False):
-		color = LIGHT_GREEN if breakable else PLATFORM_COLOR
+		color = PLATFORM_COLOR_LIGHT if breakable else PLATFORM_COLOR
 		super().__init__(*args,color)
 
 		self.level = level
