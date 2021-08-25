@@ -1,0 +1,36 @@
+from pygame.font import SysFont
+from pygame import init
+init()
+# ==================================
+
+#Window Settings
+XWIN, YWIN = 600,800
+HALF_XWIN,HALF_YWIN = XWIN/2,YWIN/2
+DISPLAY = (XWIN,YWIN)
+FLAGS = 0
+FPS = 60
+
+# Colors
+BLACK = (0,0,0)
+WHITE = (255,255,255)
+GRAY = (100,100,100)
+LIGHT_GREEN = (131,252,107)
+ANDROID_GREEN = (164,198,57)
+FOREST_GREEN = (87,189,68)
+
+# Player
+PLAYER_SIZE = (25,35)
+PLAYER_COLOR = ANDROID_GREEN
+PLAYER_MAX_SPEED = 20
+PLAYER_JUMPFORCE = 20
+GRAVITY = .98
+
+# Platforms
+PLATFORM_COLOR = FOREST_GREEN
+PLATFORM_WIDTH = 100
+PLATFORM_HEIGHT = 10
+PLATFORM_NUMBER = 20
+
+# Fonts
+LARGE_FONT = SysFont("",128)
+SMALL_FONT = SysFont("arial",24)
