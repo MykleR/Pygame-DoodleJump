@@ -1,5 +1,5 @@
 # Pygame DoodleJump
-The simplest doodle jump made with python3 and pygame in only 2 days (so the code is not really clean)
+The simplest doodle jump made with python3 and pygame in only 2 days
 
 ## Table of contents
 * [General info](#general-info)
@@ -9,8 +9,8 @@ The simplest doodle jump made with python3 and pygame in only 2 days (so the cod
 ![Screenshot](https://github.com/MykleCode/pygame-doodlejump/blob/main/demo.gif)
 
 ## General Info
-* No images used
-* Only one file
+* No images used for graphics
+* Well clean and organised code
 * Relatively small code
 
 ## Requirements
