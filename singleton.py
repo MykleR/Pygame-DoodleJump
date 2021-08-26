@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -15,6 +16,8 @@
 	You should have received a copy of the GNU Affero General Public License
 	along with Pygame-DoodleJump. If not, see <https://www.gnu.org/licenses/>.
 """
+
+
 
 class Singleton:
 	"""

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -23,7 +24,6 @@ from camera import Camera
 from player import Player
 from level import Level
 from settings import *
-
 
 
 

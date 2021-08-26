@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -20,6 +21,7 @@
 from pygame import Surface,Rect
 from camera import Camera
 from settings import *
+
 
 
 class Sprite:

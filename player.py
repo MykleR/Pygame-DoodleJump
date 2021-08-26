@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -25,7 +26,6 @@ from pygame.event import Event
 
 from sprite import Sprite
 from settings import *
-
 
 
 

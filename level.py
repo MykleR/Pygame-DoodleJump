@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -26,9 +27,9 @@ from player import Player
 from settings import *
 
 
+
 #return True with a chance of P(True)=1/x
 chance = lambda x: not randint(0,x)
-
 
 class Platform(Sprite):
 	"""

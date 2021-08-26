@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 	CopyLeft 2021 Michael Rouves
 
@@ -22,6 +23,7 @@ from pygame.sprite import Sprite
 
 from singleton import Singleton
 from settings import *
+
 
 
 class Camera(Singleton):
