@@ -20,76 +20,114 @@
 
 import pygame, sys
 
+from singleton import Singleton
 from camera import Camera
 from player import Player
 from level import Level
-from settings import *
+import settings
+
+
+
+class Game(Singleton):
+	"""
+		A class to represent the game
+		used to manage game updates, draw calls and user input events
+		Can be access via Singleton: Game.instance
+		(Check Singleton design pattern for more info)
+	"""
+	# constructor called on new instance: Game()
+	def __init__(self) -> None:
+		
+		# ============= Initiatilsation =============
+		self.__alive = True
+		# Window / Render
+		self.window = pygame.display.set_mode(settings.DISPLAY,settings.FLAGS)
+		self.clock = pygame.time.Clock()
+
+		# Instances
+		self.camera = Camera()
+		self.lvl = Level()
+		self.player = Player(
+			settings.HALF_XWIN - settings.PLAYER_SIZE[0]/2,# X POS
+			settings.HALF_YWIN + settings.HALF_YWIN/2,#      Y POS
+			*settings.PLAYER_SIZE,# SIZE
+			settings.PLAYER_COLOR#  COLOR
+		)
+
+		# User Interface
+		self.score = 0
+		self.score_txt = settings.SMALL_FONT.render("0 m",1,settings.GRAY)
+		self.score_pos = pygame.math.Vector2(10,10)
+
+		self.gameover_txt = settings.LARGE_FONT.render("Game Over",1,settings.GRAY)
+		self.gameover_rect = self.gameover_txt.get_rect(
+			center=(settings.HALF_XWIN,settings.HALF_YWIN))
+	
+	
+	def close(self):
+		self.__alive = False
+
+
+	def reset(self):
+		self.camera.reset()
+		self.lvl.reset()
+		self.player.reset()
+
+
+	def _event_loop(self):
+		# ---------- User Events ----------
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				self.close()
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_ESCAPE:
+					self.close()
+				if event.key == pygame.K_RETURN and self.player.dead:
+					self.reset()
+			self.player.handle_event(event)
+
+
+	def _update_loop(self):
+		# ----------- Update -----------
+		self.player.update()
+		self.lvl.update()
+
+		if not self.player.dead:
+			self.camera.update(self.player.rect)
+			#calculate score and update UI txt
+			self.score=-self.camera.state.y//50
+			self.score_txt = settings.SMALL_FONT.render(
+				str(self.score)+" m", 1, settings.GRAY)
+	
+
+	def _render_loop(self):
+		# ----------- Display -----------
+		self.window.fill(settings.WHITE)
+		self.lvl.draw(self.window)
+		self.player.draw(self.window)
+
+		# User Interface
+		if self.player.dead:
+			self.window.blit(self.gameover_txt,self.gameover_rect)# gameover txt
+		self.window.blit(self.score_txt, self.score_pos)# score txt
+
+		pygame.display.update()# window update
+		self.clock.tick(settings.FPS)# max loop/s
+
+
+	def run(self):
+		# ============= MAIN GAME LOOP =============
+		while self.__alive:
+			self._event_loop()
+			self._update_loop()
+			self._render_loop()
+		pygame.quit()
 
 
 
 
 if __name__ == "__main__":
-	# ============= Init =============
-
-	# Window / Render
-	window = pygame.display.set_mode(DISPLAY,FLAGS)
-	clock = pygame.time.Clock()
-
-	# Instances
-	camera = Camera()
-	lvl = Level()
-	player = Player(
-		XWIN/2-PLAYER_SIZE[0]/2,# X POS
-		YWIN/2+YWIN/4,#  Y POS
-		*PLAYER_SIZE,#   SIZE
-		PLAYER_COLOR#    COLOR
-	)
-
-	# User Interface
-	gameover_txt = LARGE_FONT.render("Game Over",1,GRAY)
-	gameover_rect = gameover_txt.get_rect(center=(HALF_XWIN,HALF_YWIN))
-	score = 0
-	score_txt = SMALL_FONT.render(str(score)+" m",1,GRAY)
-	score_pos = pygame.math.Vector2(10,10)
-
-	# ============= MAIN LOOP =============
-	loop = True
-	while loop:
-		# ---------- User Events ----------
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()
-				sys.exit()
-
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_ESCAPE:
-					loop=False
-				if event.key == pygame.K_RETURN and player.dead:
-					camera.reset()
-					lvl.reset()
-					player.reset()
-
-			player.handle_event(event)
-		
-		# ----------- Update -----------
-		player.update()
-		lvl.update(player)
-		if not player.dead:
-			camera.update(player.rect)
-			#calculate score and update UI
-			score=-camera.state.y//50
-			score_txt = SMALL_FONT.render(str(score)+" m",1,GRAY)
-
-		# ----------- Display -----------
-		window.fill(WHITE)
-		lvl.draw(window)
-		player.draw(window)
-
-		# User Interface
-		if player.dead:
-			window.blit(gameover_txt,gameover_rect)
-		window.blit(score_txt,score_pos)
-
-		pygame.display.update()
-		clock.tick(FPS)#max loop/s
+	# ============= PROGRAM STARTS HERE =============
+	game = Game()
+	game.run()
 

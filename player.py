@@ -19,12 +19,14 @@
 
 
 from math import copysign
+from singleton import Singleton
 from pygame.math import Vector2
 from pygame.locals import KEYDOWN,KEYUP,K_LEFT,K_RIGHT
 from pygame.sprite import collide_rect
 from pygame.event import Event
 
 from sprite import Sprite
+from level import Level
 from settings import *
 
 
@@ -32,15 +34,17 @@ from settings import *
 #Return the sign of a number: getsign(-5)-> -1
 getsign = lambda x : copysign(1, x)
 
-class Player(Sprite):
+class Player(Sprite, Singleton):
 	"""
 		A class to represent the player
 		Manages player's physics (movement...)
+		Can be access via Singleton: Player.instance
+		(Check Singleton design pattern for more info)
 	"""
 	# (Overriding Sprite.__init__ constructor)
 	def __init__(self,*args):
 		#calling default Sprite constructor
-		super().__init__(*args)
+		Sprite.__init__(self,*args)
 		self.__startrect = self.rect.copy()
 		self.__maxvelocity = Vector2(PLAYER_MAX_SPEED,100)
 		self.__startspeed = 1.5
@@ -48,6 +52,7 @@ class Player(Sprite):
 		self._velocity = Vector2()
 		self._input = 0
 		self._jumpforce = PLAYER_JUMPFORCE
+		self._spring_jumpforce = PLAYER_SPRING_JUMPFORCE
 
 		self.gravity = GRAVITY
 		self.accel = .5
@@ -94,14 +99,27 @@ class Player(Sprite):
 		self._velocity.y = -force
 
 
-	def collide(self,platform:Sprite) -> bool:
-		" Called by lvl foreach platform to check for y-axis collisions"
-		if collide_rect(self,platform):
-			#if falling and colliding: isGrounded should jump
+	def onCollide(self, obj:Sprite) -> None:
+		self.rect.bottom = obj.rect.top
+		self.jump()
+	
+
+	def collisions(self) -> None:
+		" Called each frame in Player.update for collision checking"
+		lvl = Level.instance
+		if not lvl: return
+		for platform in lvl.platforms:
+			# check falling and colliding <=> isGrounded ?
 			if self._velocity.y > .5:
-				self.rect.bottom = platform.rect.top
-				return True
-		return False
+				# check collisions with platform's spring bonus
+				if platform.spring and collide_rect(self,platform.spring):
+					self.onCollide(platform.spring)
+					self.jump(70)
+
+				# check collisions with platform
+				if collide_rect(self,platform):
+					self.onCollide(platform)
+					platform.onCollide()
 
 
 	def update(self) -> None:
@@ -112,9 +130,9 @@ class Player(Sprite):
 			return
 		#Velocity update (apply gravity, input acceleration)
 		self._velocity.y += self.gravity
-		if self._input:
+		if self._input: # accelerate
 			self._velocity.x += self._input*self.accel
-		elif self._velocity.x:
+		elif self._velocity.x: # deccelerate
 			self._velocity.x -= getsign(self._velocity.x)*self.deccel
 			self._velocity.x = round(self._velocity.x)
 		self._fix_velocity()
@@ -122,3 +140,5 @@ class Player(Sprite):
 		#Position Update (block x-axis to get out of screen)
 		self.rect.x = (self.rect.x+self._velocity.x)%(XWIN-self.rect.width)
 		self.rect.y += self._velocity.y
+
+		self.collisions()

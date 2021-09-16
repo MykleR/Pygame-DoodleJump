@@ -28,10 +28,12 @@ from settings import *
 
 class Camera(Singleton):
 	"""
-		A class to represent the only camera
+		A class to represent the camera
 		Manages level position scrolling
 		Can be access via Singleton: Camera.instance
+		(Check Singleton design pattern for more info)
 	"""
+	# constructor called on new instance: Camera()
 	def __init__(self, lerp=5,width=XWIN, height=YWIN):
 		self.state = Rect(0, 0, width, height)
 		self.lerp = lerp
@@ -53,11 +55,11 @@ class Camera(Singleton):
 	
 	def update(self, target:Rect) -> None:
 		" Called each frame to scroll up to maxheight reached by player."
-		#updating maxheight
+		# updating maxheight
 		if(target.y<self.maxheight):
 			self.lastheight = self.maxheight
 			self.maxheight = target.y
-		#calculate scrolling speed required
+		# calculate scrolling speed required
 		speed = ((self.state.y+self.center)-self.maxheight)/self.lerp
 		self.state.y-=speed
 
