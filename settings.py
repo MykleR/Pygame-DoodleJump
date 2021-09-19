@@ -5,11 +5,11 @@ init()
 # ==================================
 
 #Window Settings
-XWIN, YWIN = 600,800 # Resolution
+XWIN, YWIN = 600,800 #                Resolution
 HALF_XWIN,HALF_YWIN = XWIN/2,YWIN/2 # Center
 DISPLAY = (XWIN,YWIN)
-FLAGS = 0 # Fullscreen, resizeable... 
-FPS = 60 # Render frame rate
+FLAGS = 0 #                           Fullscreen, resizeable... 
+FPS = 60 #                            Render frame rate
 
 # Colors
 BLACK = (0,0,0)
@@ -30,9 +30,11 @@ GRAVITY = .98
 # Platforms
 PLATFORM_COLOR = FOREST_GREEN
 PLATFORM_COLOR_LIGHT = LIGHT_GREEN
-PLATFORM_WIDTH = 100
-PLATFORM_HEIGHT = 10
-PLATFORM_NUMBER = 10
+PLATFORM_SIZE = (100,10)
+PLATFORM_DISTANCE_GAP = (50,210)
+MAX_PLATFORM_NUMBER = 10
+SPRING_SPAWN_CHANCE = 10
+BREAKABLE_PLATFORM_CHANCE = 12
 
 # Fonts
 LARGE_FONT = SysFont("",128)

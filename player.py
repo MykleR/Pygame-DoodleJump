@@ -19,15 +19,15 @@
 
 
 from math import copysign
-from singleton import Singleton
 from pygame.math import Vector2
 from pygame.locals import KEYDOWN,KEYUP,K_LEFT,K_RIGHT
 from pygame.sprite import collide_rect
 from pygame.event import Event
 
+from singleton import Singleton
 from sprite import Sprite
 from level import Level
-from settings import *
+import settings as config
 
 
 
@@ -36,32 +36,35 @@ getsign = lambda x : copysign(1, x)
 
 class Player(Sprite, Singleton):
 	"""
-		A class to represent the player
-		Manages player's physics (movement...)
-		Can be access via Singleton: Player.instance
-		(Check Singleton design pattern for more info)
+	A class to represent the player.
+	
+	Manages player's input,physics (movement...).
+	Can be access via Singleton: Player.instance.
+	(Check Singleton design pattern for more info).
 	"""
 	# (Overriding Sprite.__init__ constructor)
 	def __init__(self,*args):
 		#calling default Sprite constructor
 		Sprite.__init__(self,*args)
 		self.__startrect = self.rect.copy()
-		self.__maxvelocity = Vector2(PLAYER_MAX_SPEED,100)
+		self.__maxvelocity = Vector2(config.PLAYER_MAX_SPEED,100)
 		self.__startspeed = 1.5
 
 		self._velocity = Vector2()
 		self._input = 0
-		self._jumpforce = PLAYER_JUMPFORCE
-		self._spring_jumpforce = PLAYER_SPRING_JUMPFORCE
+		self._jumpforce = config.PLAYER_JUMPFORCE
+		self._spring_jumpforce = config.PLAYER_SPRING_JUMPFORCE
 
-		self.gravity = GRAVITY
+		self.gravity = config.GRAVITY
 		self.accel = .5
 		self.deccel = .6
 		self.dead = False
 	
 
 	def _fix_velocity(self) -> None:
-		" Called in Player.update(), set player's velocity between max/min"
+		""" Set player's velocity between max/min.
+		Should be called in Player.update().
+		"""
 		self._velocity.y = min(self._velocity.y,self.__maxvelocity.y)
 		self._velocity.y = round(max(self._velocity.y,-self.__maxvelocity.y),2)
 		self._velocity.x = min(self._velocity.x,self.__maxvelocity.x)
@@ -69,7 +72,7 @@ class Player(Sprite, Singleton):
 
 
 	def reset(self) -> None:
-		" Called only when lvl restarts (after player death)"
+		" Called only when game restarts (after player death)."
 		self._velocity = Vector2()
 		self.rect = self.__startrect.copy()
 		self.camera_rect = self.__startrect.copy()
@@ -77,7 +80,9 @@ class Player(Sprite, Singleton):
 
 
 	def handle_event(self,event:Event) -> None:
-		" Called in main loop foreach user input event"
+		""" Called in main loop foreach user input event.
+		:param event pygame.Event: user input event
+		"""
 		# Check if start moving
 		if event.type == KEYDOWN:
 			# Moves player only on x-axis (left/right)
@@ -105,16 +110,18 @@ class Player(Sprite, Singleton):
 	
 
 	def collisions(self) -> None:
-		" Called each frame in Player.update for collision checking"
+		""" Checks for collisions with level.
+		Should be called in Player.update().
+		"""
 		lvl = Level.instance
 		if not lvl: return
 		for platform in lvl.platforms:
 			# check falling and colliding <=> isGrounded ?
 			if self._velocity.y > .5:
 				# check collisions with platform's spring bonus
-				if platform.spring and collide_rect(self,platform.spring):
-					self.onCollide(platform.spring)
-					self.jump(70)
+				if platform.bonus and collide_rect(self,platform.bonus):
+					self.onCollide(platform.bonus)
+					self.jump(platform.bonus.force)
 
 				# check collisions with platform
 				if collide_rect(self,platform):
@@ -123,9 +130,11 @@ class Player(Sprite, Singleton):
 
 
 	def update(self) -> None:
-		" Called each frame for position and velocity updates"
+		""" For position and velocity updates.
+		Should be called each frame.
+		"""
 		#Check if player out of screen: should be dead
-		if self.camera_rect.y>YWIN*2:
+		if self.camera_rect.y>config.YWIN*2:
 			self.dead = True
 			return
 		#Velocity update (apply gravity, input acceleration)
@@ -137,8 +146,8 @@ class Player(Sprite, Singleton):
 			self._velocity.x = round(self._velocity.x)
 		self._fix_velocity()
 
-		#Position Update (block x-axis to get out of screen)
-		self.rect.x = (self.rect.x+self._velocity.x)%(XWIN-self.rect.width)
+		#Position Update (prevent x-axis to be out of screen)
+		self.rect.x = (self.rect.x+self._velocity.x)%(config.XWIN-self.rect.width)
 		self.rect.y += self._velocity.y
 
 		self.collisions()

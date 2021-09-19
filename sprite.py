@@ -20,15 +20,15 @@
 
 from pygame import Surface,Rect
 from camera import Camera
-from settings import *
 
 
 
 class Sprite:
 	"""
-		A class to represent a sprite.
-		Used for displaying.
-		Image generated with given color and size.
+	A class to represent a sprite.
+	
+	Used for pygame displaying.
+	Image generated with given color and size.
 	"""
 	# default constructor (must be called if overrided by inheritance)
 	def __init__(self,x:int,y:int,w:int,h:int,color:tuple):
@@ -39,6 +39,7 @@ class Sprite:
 		self.rect = Rect(x,y,w,h)
 		self.camera_rect = self.rect.copy()
 
+	# Public getters for _image & __color so they remain private
 	@property
 	def image(self) -> Surface:
 		return self._image
@@ -48,7 +49,7 @@ class Sprite:
 
 	@color.setter
 	def color(self, new:tuple) -> None:
-		" Called when Sprite.__setattr__('color',x)"
+		" Called when Sprite.__setattr__('color',x)."
 		assert isinstance(new,tuple) and len(new)==3,"Value is not a color"
 		self.__color = new
 		#update image surface
@@ -56,7 +57,9 @@ class Sprite:
 	
 
 	def draw(self, surface:Surface) -> None:
-		" Render method,Should be called every frame after update."
+		""" Render method,Should be called every frame after update.
+		:param surface pygame.Surface: the surface to draw on.
+		"""
 		# If camera instancied: calculate render positon
 		if Camera.instance:
 			self.camera_rect = Camera.instance.apply(self)

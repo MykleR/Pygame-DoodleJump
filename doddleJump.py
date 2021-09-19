@@ -24,44 +24,46 @@ from singleton import Singleton
 from camera import Camera
 from player import Player
 from level import Level
-import settings
+import settings as config
 
 
 
 class Game(Singleton):
 	"""
-		A class to represent the game
-		used to manage game updates, draw calls and user input events
-		Can be access via Singleton: Game.instance
-		(Check Singleton design pattern for more info)
+	A class to represent the game.
+
+	used to manage game updates, draw calls and user input events.
+	Can be access via Singleton: Game.instance .
+	(Check Singleton design pattern for more info)
 	"""
+
 	# constructor called on new instance: Game()
 	def __init__(self) -> None:
 		
-		# ============= Initiatilsation =============
+		# ============= Initialisation =============
 		self.__alive = True
 		# Window / Render
-		self.window = pygame.display.set_mode(settings.DISPLAY,settings.FLAGS)
+		self.window = pygame.display.set_mode(config.DISPLAY,config.FLAGS)
 		self.clock = pygame.time.Clock()
 
 		# Instances
 		self.camera = Camera()
 		self.lvl = Level()
 		self.player = Player(
-			settings.HALF_XWIN - settings.PLAYER_SIZE[0]/2,# X POS
-			settings.HALF_YWIN + settings.HALF_YWIN/2,#      Y POS
-			*settings.PLAYER_SIZE,# SIZE
-			settings.PLAYER_COLOR#  COLOR
+			config.HALF_XWIN - config.PLAYER_SIZE[0]/2,# X POS
+			config.HALF_YWIN + config.HALF_YWIN/2,#      Y POS
+			*config.PLAYER_SIZE,# SIZE
+			config.PLAYER_COLOR#  COLOR
 		)
 
 		# User Interface
 		self.score = 0
-		self.score_txt = settings.SMALL_FONT.render("0 m",1,settings.GRAY)
+		self.score_txt = config.SMALL_FONT.render("0 m",1,config.GRAY)
 		self.score_pos = pygame.math.Vector2(10,10)
 
-		self.gameover_txt = settings.LARGE_FONT.render("Game Over",1,settings.GRAY)
+		self.gameover_txt = config.LARGE_FONT.render("Game Over",1,config.GRAY)
 		self.gameover_rect = self.gameover_txt.get_rect(
-			center=(settings.HALF_XWIN,settings.HALF_YWIN))
+			center=(config.HALF_XWIN,config.HALF_YWIN))
 	
 	
 	def close(self):
@@ -96,13 +98,13 @@ class Game(Singleton):
 			self.camera.update(self.player.rect)
 			#calculate score and update UI txt
 			self.score=-self.camera.state.y//50
-			self.score_txt = settings.SMALL_FONT.render(
-				str(self.score)+" m", 1, settings.GRAY)
+			self.score_txt = config.SMALL_FONT.render(
+				str(self.score)+" m", 1, config.GRAY)
 	
 
 	def _render_loop(self):
 		# ----------- Display -----------
-		self.window.fill(settings.WHITE)
+		self.window.fill(config.WHITE)
 		self.lvl.draw(self.window)
 		self.player.draw(self.window)
 
@@ -112,7 +114,7 @@ class Game(Singleton):
 		self.window.blit(self.score_txt, self.score_pos)# score txt
 
 		pygame.display.update()# window update
-		self.clock.tick(settings.FPS)# max loop/s
+		self.clock.tick(config.FPS)# max loop/s
 
 
 	def run(self):
