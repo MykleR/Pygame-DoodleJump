@@ -53,7 +53,7 @@ class Player(Sprite, Singleton):
 		self._velocity = Vector2()
 		self._input = 0
 		self._jumpforce = config.PLAYER_JUMPFORCE
-		self._spring_jumpforce = config.PLAYER_SPRING_JUMPFORCE
+		self._bonus_jumpforce = config.PLAYER_BONUS_JUMPFORCE
 
 		self.gravity = config.GRAVITY
 		self.accel = .5

@@ -33,12 +33,16 @@ chance = lambda x: not randint(0,x)
 
 
 class Bonus(Sprite):
+	"""
+	A class to represent a bonus
+	Inherits the Sprite class.
+	"""
 
 	WIDTH = 15
 	HEIGHT = 15
 
-	def __init__(self, parent:Sprite,
-			color=config.BLACK, force=1):
+	def __init__(self, parent:Sprite,color=config.GRAY,
+			force=config.PLAYER_BONUS_JUMPFORCE):
 
 		self.parent = parent
 		super().__init__(*self._get_inital_pos(),
@@ -51,13 +55,6 @@ class Bonus(Sprite):
 		return x,y
 
 
-class Spring(Bonus):
-	def __init__(self, parent:Sprite):
-
-		super().__init__(parent,color=config.GRAY,
-			force=config.PLAYER_SPRING_JUMPFORCE)
-
-
 
 
 
@@ -67,10 +64,11 @@ class Platform(Sprite):
 
 	Should only be instantiated by a Level instance.
 	Can have a bonus spring or broke on player jump.
+	Inherits the Sprite class.
 	"""
 	# (Overriding inherited constructor: Sprite.__init__)
 	def __init__(self, x:int, y:int, width:int, height:int,
-			initial_spring=False,breakable=False):
+			initial_bonus=False,breakable=False):
 
 		color = config.PLATFORM_COLOR
 		if breakable:color = config.PLATFORM_COLOR_LIGHT
@@ -79,8 +77,8 @@ class Platform(Sprite):
 		self.breakable = breakable
 		self.__level = Level.instance
 		self.__bonus = None
-		if initial_spring:
-			self.add_bonus(Spring)
+		if initial_bonus:
+			self.add_bonus(Bonus)
 
 	# Public getter for __bonus so it remains private
 	@property
@@ -136,7 +134,7 @@ class Level(Singleton):
 		self.distance_min = min(config.PLATFORM_DISTANCE_GAP)
 		self.distance_max = max(config.PLATFORM_DISTANCE_GAP)
 
-		self.spring_platform_chance = config.SPRING_SPAWN_CHANCE
+		self.bonus_platform_chance = config.BONUS_SPAWN_CHANCE
 		self.breakable_platform_chance = config.BREAKABLE_PLATFORM_CHANCE
 
 		self.__platforms = []
@@ -173,7 +171,7 @@ class Level(Singleton):
 				randint(0,config.XWIN-self.platform_size[0]),#       X POS
 				self.__platforms[-1].rect.y-offset,#                 Y POS
 				*self.platform_size, #                               SIZE
-				initial_spring=chance(self.spring_platform_chance),# HAS A Bonus
+				initial_bonus=chance(self.bonus_platform_chance),# HAS A Bonus
 				breakable=chance(self.breakable_platform_chance)))#  IS BREAKABLE
 		else:
 			# (just in case) no platform: add the base one
